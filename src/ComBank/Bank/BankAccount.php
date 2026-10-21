@@ -17,17 +17,23 @@ use ComBank\Exceptions\InvalidOverdraftFundsException;
 use ComBank\OverdraftStrategy\Contracts\OverdraftInterface;
 use ComBank\Support\Traits\AmountValidationTrait;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
+use PhpParser\Node\Stmt\TryCatch;
 
 class BankAccount implements BankAccountInterface
 {
-
+    use AmountValidationTrait;
     //declarar atributo balance
     private float $balance;
     private bool $status;
+
+    private OverdraftInterface $overdraft; 
     // constructor que reciba balance
-    public function  __construct(float $balance ){
+    public function  __construct(float $balance){
+        $this->validateAmount($balance);
         $this->balance = $balance;
         $this->status = true;
+        // iniciLIZA overdraft atributo con un nuevo objeto noOverdraft 
+        $this->overdraft = new NoOverdraft();
         
     }
     // getBalance()
@@ -64,8 +70,23 @@ public function setBalance(float $balance): void
      if (!$this->isOpen()) {
         throw new BankAccountException('The account is closed.');
     }
+    try {
+        $newBalance = $bankTransaction->applyTransaction($this);
+        $this->setBalance($newBalance);
+    } catch (InvalidOverdraftFundsException $e) {
+        throw new FailedTransactionException( $e->getMessage());
+    }
+    }
 
-    $newBalance = $bankTransaction->applyTransaction($this);
-    $this->setBalance($newBalance);
+    public function getOverdraft(): OverdraftInterface
+    {
+        return $this->overdraft;
     }
+
+    public function applyOverdraft(OverdraftInterface $overdraft): void
+    {
+        $this->overdraft = $overdraft;
     }
+
+
+}
