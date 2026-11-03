@@ -33,5 +33,9 @@ interface BankAccountInterface
 
     public function setBalance(float $balance): void;
 
+    public function setEmail (string $email): void;
+
+    public function getEmail () : string;
+
    
 }

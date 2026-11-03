@@ -26,15 +26,34 @@ class BankAccount implements BankAccountInterface
     private float $balance;
     private bool $status;
 
+    private string $email;
+
     private OverdraftInterface $overdraft; 
     // constructor que reciba balance
-    public function  __construct(float $balance){
+    public function  __construct(float $balance, string $email=""){
         $this->validateAmount($balance);
         $this->balance = $balance;
         $this->status = true;
         // iniciLIZA overdraft atributo con un nuevo objeto noOverdraft 
         $this->overdraft = new NoOverdraft();
+        if(!$email==''){
+        $this->validateEmail($email);
+        $this->email = $email;
         
+        }
+        
+    }
+
+    //getEmail()
+
+    public function getEmail():string{
+        return $this->email;
+    }
+
+    //setEmail()
+
+    public function setEmail(string $email): void{
+        $this->email = $email;
     }
     // getBalance()
     public function getBalance():float{
