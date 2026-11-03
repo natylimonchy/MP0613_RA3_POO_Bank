@@ -13,6 +13,7 @@ use ComBank\Transactions\DepositTransaction;
 use ComBank\Transactions\WithdrawTransaction;
 use ComBank\Exceptions\BankAccountException;
 use ComBank\Exceptions\FailedTransactionException;
+use ComBank\Exceptions\InvalidEmailException;
 use ComBank\Exceptions\ZeroAmountException;
 
 require_once 'bootstrap.php';
@@ -126,3 +127,24 @@ try {
 } catch (BankAccountException $e) {
     pl('Error: ' . $e->getMessage());
 }
+
+//---[Bank account 3]---/
+pl('--------- [Start testing bank account #3, Email] --------');
+try{
+$bankAccount3 = new BankAccount(400.00, "nati@gmail.com");
+pl('The email is ' . $bankAccount3->getEmail());
+
+
+}catch(InvalidEmailException $e){
+    pl('Error ' . $e->getMessage());
+}
+
+try {
+    $bankAccount4 = new BankAccount(400.00, "lalalalala.com");
+    pl('The email is ' . $bankAccount4->getEmail());
+} catch (InvalidEmailException $e) {
+    pl('Error ' . $e->getMessage());
+}
+
+
+
