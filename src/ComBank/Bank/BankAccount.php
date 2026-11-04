@@ -86,6 +86,7 @@ public function setBalance(float $balance): void
 }
 
     public function transaction (BankTransactionInterface $bankTransaction):void{
+    
      if (!$this->isOpen()) {
         throw new BankAccountException('The account is closed.');
     }
