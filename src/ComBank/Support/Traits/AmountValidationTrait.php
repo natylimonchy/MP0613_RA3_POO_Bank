@@ -12,6 +12,7 @@ namespace ComBank\Support\Traits;
 use ComBank\Exceptions\InvalidArgsException;
 use ComBank\Exceptions\ZeroAmountException;
 use ComBank\Exceptions\InvalidEmailException;
+use ComBank\Exceptions\InvalidHolderNameException;
 
 trait AmountValidationTrait
 {
@@ -31,6 +32,12 @@ trait AmountValidationTrait
 {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         throw new InvalidEmailException("Invalid email format");
+    }
+}
+
+private function validateHolderName(string $holderName):void{
+    if(strlen(trim($holderName))<3){
+        throw new InvalidHolderNameException("Se rechaza la creación de la cuenta porque el nombre del titular no es válido.");
     }
 }
 }

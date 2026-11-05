@@ -28,9 +28,11 @@ class BankAccount implements BankAccountInterface
 
     private string $email;
 
+    private string $holderName;
+
     private OverdraftInterface $overdraft; 
     // constructor que reciba balance
-    public function  __construct(float $balance, string $email=""){
+    public function  __construct(float $balance, string $email="", string $holderName ="nombre"){
         $this->validateAmount($balance);
         $this->balance = $balance;
         $this->status = true;
@@ -40,7 +42,9 @@ class BankAccount implements BankAccountInterface
         $this->validateEmail($email);
         $this->email = $email;
         
+        
         }
+        $this->setHolderName($holderName);
         
     }
 
@@ -106,6 +110,16 @@ public function setBalance(float $balance): void
     public function applyOverdraft(OverdraftInterface $overdraft): void
     {
         $this->overdraft = $overdraft;
+    }
+
+
+    public function getHolderName (): String {
+        return $this->holderName;
+    }
+
+    public function setHolderName (String $holderName){
+        $this->validateHolderName($holderName);
+        $this->holderName= $holderName;
     }
 
 

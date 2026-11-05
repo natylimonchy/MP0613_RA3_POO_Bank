@@ -10,12 +10,14 @@
 use ComBank\Bank\BankAccount;
 use ComBank\OverdraftStrategy\GoldOverfraft;
 use ComBank\OverdraftStrategy\SilverOverdraft;
+use ComBank\Transactions\BonusTransaction;
 use ComBank\Transactions\DepositTransaction;
 use ComBank\Transactions\InterestTransaction;
 use ComBank\Transactions\WithdrawTransaction;
 use ComBank\Exceptions\BankAccountException;
 use ComBank\Exceptions\FailedTransactionException;
 use ComBank\Exceptions\InvalidEmailException;
+use ComBank\Exceptions\InvalidHolderNameException;
 use ComBank\Exceptions\ZeroAmountException;
 
 require_once 'bootstrap.php';
@@ -179,4 +181,67 @@ pl("Estrategia de Sobregiro: NoOverdraft");
 pl("Tasa de interest: " . $bankAccount6->getOverdraft()->getInterestRate() ."%");
 $bankAccount6->transaction(new InterestTransaction());
 pl("Saldo despues de la transaccion: " . $bankAccount6->getBalance());
+
+//---[ejemplo1]---/
+pl('--------- [Ejemplo 1] --------');
+try{
+    $bankAccount7 = new BankAccount(100.00, "ana@gmail.com", "Ana Lopez");
+    pl("Nombre de titular: " . $bankAccount7->getHolderName());
+    pl("Saldo de la cuenta: " . $bankAccount7->getBalance());
+    pl("Descubierto: SilverOverdraft");
+    $bankAccount7->applyOverdraft(new SilverOverdraft());
+    $bankAccount7->transaction(new BonusTransaction());
+    pl("Saldo despues de la transaccion: " . $bankAccount7->getBalance());
+
+}catch(InvalidHolderNameException $e){
+    pl('Resultado: ' . $e->getMessage());
+}
+
+//---[ejemplo2]---/
+pl('--------- [Ejemplo 2] --------');
+try{
+    $bankAccount8 = new BankAccount(100.00, "", "Luis Perez");
+    pl("Nombre de titular: " . $bankAccount8->getHolderName());
+    pl("Saldo de la cuenta: " . $bankAccount8->getBalance());
+    pl("Descubierto: GoldOverdraft");
+    $bankAccount8->applyOverdraft(new GoldOverfraft());
+    $bankAccount8->transaction(new BonusTransaction());
+    pl("Saldo despues de la transaccion: " . $bankAccount8->getBalance());
+
+}catch(InvalidHolderNameException $e){
+    pl('Resultado: ' . $e->getMessage());
+}
+
+//---[ejemplo3]---/
+pl('--------- [Ejemplo 3] --------');
+try{
+    $bankAccount9 = new BankAccount(100.00, "" , "Marta Ruiz");
+    pl("Nombre de titular: " . $bankAccount9->getHolderName());
+    pl("Saldo de la cuenta: " . $bankAccount9->getBalance());
+    pl("Descubierto: NoOverdraft");
+    
+    $bankAccount9->transaction(new BonusTransaction());
+    pl("Saldo despues de la transaccion: " . $bankAccount9->getBalance());
+
+}catch(InvalidHolderNameException $e){
+    pl('Resultado: ' . $e->getMessage());
+}
+
+//---[ejemplo4]---/
+pl('--------- [Ejemplo 4] --------');
+try{
+    $bankAccount9 = new BankAccount(100.00, "" , " Al");
+    pl("Nombre de titular: " . $bankAccount9->getHolderName());
+    pl("Saldo de la cuenta: " . $bankAccount9->getBalance());
+    pl("Descubierto: NoOverdraft");
+    
+    $bankAccount9->transaction(new BonusTransaction());
+    pl("Saldo despues de la transaccion: " . $bankAccount9->getBalance());
+
+}catch(InvalidHolderNameException $e){
+    pl('Resultado: ' . $e->getMessage());
+}
+
+
+
 
