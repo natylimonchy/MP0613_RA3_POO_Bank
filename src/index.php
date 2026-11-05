@@ -12,6 +12,7 @@ use ComBank\OverdraftStrategy\GoldOverfraft;
 use ComBank\OverdraftStrategy\SilverOverdraft;
 use ComBank\Transactions\DepositTransaction;
 use ComBank\Transactions\InterestTransaction;
+use ComBank\Transactions\TransferTransaction;
 use ComBank\Transactions\WithdrawTransaction;
 use ComBank\Exceptions\BankAccountException;
 use ComBank\Exceptions\FailedTransactionException;
@@ -179,4 +180,33 @@ pl("Estrategia de Sobregiro: NoOverdraft");
 pl("Tasa de interest: " . $bankAccount6->getOverdraft()->getInterestRate() ."%");
 $bankAccount6->transaction(new InterestTransaction());
 pl("Saldo despues de la transaccion: " . $bankAccount6->getBalance());
+
+
+//---[EXAMEN]---/
+pl('--------- [Ejemplo 1] --------');
+$bankAccount7 = new BankAccount(500.00);
+$bankAccount8 = new BankAccount(200.00);
+pl("Saldo de la cuenta de origen: " . $bankAccount7->getBalance());
+pl("Saldo de la cuenta de origen: " . $bankAccount8->getBalance());
+
+$bankAccount7->transaction(new TransferTransaction(100, $bankAccount8));
+pl("Saldo de origen después de la transacción: " . $bankAccount7->getBalance());
+pl("Saldo de destino después de la transacción: " . $bankAccount8->getBalance());
+
+//---[EXAMEN]---/
+pl('--------- [Ejemplo 2] --------');
+$bankAccount9 = new BankAccount(50.00);
+$bankAccount10 = new BankAccount(200.00);
+pl("Saldo de la cuenta de origen: " . $bankAccount9->getBalance());
+pl("Saldo de la cuenta de origen: " . $bankAccount10->getBalance());
+pl("Importe de la transferencia: 100");
+try{
+$bankAccount9->transaction(new TransferTransaction(100, $bankAccount10));
+pl("Saldo de origen después de la transacción: " . $bankAccount9->getBalance());
+pl("Saldo de destino después de la transacción: " . $bankAccount10->getBalance());
+}catch(BankAccountException $e){
+    pl('Resultado: ' . $e->getMessage());
+}
+
+
 
