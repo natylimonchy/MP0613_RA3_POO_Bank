@@ -12,11 +12,13 @@ use ComBank\Exceptions\InvalidArgsException;
 use ComBank\Exceptions\ZeroAmountException;
 use ComBank\OverdraftStrategy\NoOverdraft;
 use ComBank\Bank\Contracts\BankAccountInterface;
+use ComBank\Exceptions\AccountBlockedException;
 use ComBank\Exceptions\FailedTransactionException;
 use ComBank\Exceptions\InvalidOverdraftFundsException;
 use ComBank\OverdraftStrategy\Contracts\OverdraftInterface;
 use ComBank\Support\Traits\AmountValidationTrait;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
+use Override;
 use PhpParser\Node\Stmt\TryCatch;
 
 class BankAccount implements BankAccountInterface
@@ -28,9 +30,13 @@ class BankAccount implements BankAccountInterface
 
     private string $email;
 
+    private string $holderName;
+
+    private bool $blocked;
+
     private OverdraftInterface $overdraft; 
     // constructor que reciba balance
-    public function  __construct(float $balance, string $email=""){
+    public function  __construct(float $balance, string $email="", string $holderName ="nombre"){
         $this->validateAmount($balance);
         $this->balance = $balance;
         $this->status = true;
@@ -40,7 +46,11 @@ class BankAccount implements BankAccountInterface
         $this->validateEmail($email);
         $this->email = $email;
         
+        
+        
         }
+        $this->setHolderName($holderName);
+        $this->blocked = false;
         
     }
 
@@ -62,8 +72,11 @@ class BankAccount implements BankAccountInterface
 
     //closeAccount()
     public function closeAccount():void{
-        if(!$this->status){
+        if(!$this->status ){
             throw new BankAccountException('The account is already closed');
+        }
+        if( $this->balance < 0){
+            throw new BankAccountException("Cannot close an account with a negative balance.");
         }
         $this->status=false;
     }
@@ -90,6 +103,10 @@ public function setBalance(float $balance): void
      if (!$this->isOpen()) {
         throw new BankAccountException('The account is closed.');
     }
+
+    if($this->blocked){
+        throw new AccountBlockedException('The account is blocked.');
+    }
     try {
         $newBalance = $bankTransaction->applyTransaction($this);
         $this->setBalance($newBalance);
@@ -106,6 +123,38 @@ public function setBalance(float $balance): void
     public function applyOverdraft(OverdraftInterface $overdraft): void
     {
         $this->overdraft = $overdraft;
+    }
+
+
+    public function getHolderName (): String {
+        return $this->holderName;
+    }
+
+    public function setHolderName (String $holderName){
+        $this->validateHolderName($holderName);
+        $this->holderName= $holderName;
+    }
+
+
+    public function blockAccount() : void {
+        if($this->blocked ){
+            throw new BankAccountException('The account is already blocked');
+        }
+        $this->blocked = true;
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->blocked;
+    }
+
+    
+    public function unblockAccount(): void
+    {
+        if ($this->blocked === false) {
+    throw new BankAccountException('The account is not blocked');
+}
+$this->blocked = false;
     }
 
 

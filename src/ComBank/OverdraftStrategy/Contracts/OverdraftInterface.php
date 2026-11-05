@@ -15,4 +15,6 @@ interface OverdraftInterface
     public function getOverdraftFundsAmount(): float;
 
     public function getInterestRate() : int;
+
+    public function getWelcomeBonus() : float;
 }

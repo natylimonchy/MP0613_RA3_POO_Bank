@@ -37,5 +37,13 @@ interface BankAccountInterface
 
     public function getEmail () : string;
 
+    public function isBlocked() : bool;
+
+    public function unblockAccount () :void;
+
+    public function blockAccount () : void;
+
+
+
    
 }

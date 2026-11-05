@@ -23,4 +23,10 @@ class GoldOverfraft implements OverdraftInterface
     {
         return 10;
     }
+
+
+    public function getWelcomeBonus(): float
+    {
+        return 50;
+    }
 }

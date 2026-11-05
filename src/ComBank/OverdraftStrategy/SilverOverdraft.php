@@ -32,5 +32,10 @@ class SilverOverdraft implements OverdraftInterface
     {
         return 5;
     }
+
+    public function getWelcomeBonus(): float
+    {
+        return 25;
+    }
     
 }

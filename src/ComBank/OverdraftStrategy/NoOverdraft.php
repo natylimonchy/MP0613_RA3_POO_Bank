@@ -29,4 +29,9 @@ class NoOverdraft implements OverdraftInterface
     {
         return 1;
     }
+
+    public function getWelcomeBonus(): float
+    {
+        return 10;
+    }
 }
